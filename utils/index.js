@@ -1,0 +1,122 @@
+/*
+ * @Author: Yorn Qiu
+ * @Date: 2022-04-08 15:40:12
+ * @LastEditors: Yorn Qiu
+ * @LastEditTime: 2024-01-31 16:30:50
+ * @FilePath: /node-cas/utils/index.js
+ * @Description: file content
+ */
+
+import { existsSync, mkdirSync } from 'fs'
+import { dirname } from 'path'
+import { access } from 'fs/promises'
+import CryptoJS from 'crypto-js'
+
+const SECRET = config.encryptSecret
+
+export default {
+  /**
+   * 递归创建多级目录
+   * @param {string} dir 路径
+   */
+  mkdirsSync(dir) {
+    if (existsSync(dir)) {
+      return true
+    } else {
+      if (this.mkdirsSync(dirname(dir))) {
+        mkdirSync(dir)
+        return true
+      }
+    }
+  },
+
+  /**
+   * 判断文件是否存在，基于fs/promises
+   * @param {string} path 文件路径
+   * @returns {boolean} 文件是否存在
+   */
+  async exists(path) {
+    try {
+      await access(path)
+      return true
+    } catch (error) {
+      return false
+    }
+  },
+
+  /**
+   * 生成uuid
+   * @returns {string} uuid
+   */
+  uuid() {
+    var s = []
+    var hexDigits = '0123456789abcdef'
+    for (var i = 0; i < 36; i++) {
+      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
+    }
+    s[14] = '4' // bits 12-15 of the time_hi_and_version field to 0010
+    s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
+    s[8] = s[13] = s[18] = s[23] = '-'
+
+    var uuid = s.join('')
+    return uuid
+  },
+
+  /**
+   * 将日期格式化为特定格式的字符串
+   * 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
+   * DateFormat(Date, 'yyyy-MM-dd hh:mm:ss.S') ==> 2006-07-02 08:09:04.423
+   * DateFormat(Date, 'yyyy-M-d h:m:s.S')      ==> 2006-7-2 8:9:4.18
+   * @param {Date} date 日期
+   * @param {string} fmt 字符串格式
+   * @returns {string} 格式化的日期
+   */
+  dateFormat(date, fmt) {
+    var o = {
+      'M+': date.getMonth() + 1, //月份
+      'd+': date.getDate(), //日
+      'h+': date.getHours(), //小时
+      'm+': date.getMinutes(), //分
+      's+': date.getSeconds(), //秒
+      'q+': Math.floor((date.getMonth() + 3) / 3), //季度
+      S: date.getMilliseconds(), //毫秒
+    }
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+    for (var k in o)
+      if (new RegExp('(' + k + ')').test(fmt))
+        fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length))
+    return fmt
+  },
+
+  /**
+   * 解密
+   * @param {string} data 数据，算法为AES
+   * @returns {string} 解密后的数据
+   */
+  decrypt(data) {
+    return (data && CryptoJS.AES.decrypt(data, SECRET).toString(CryptoJS.enc.Utf8)) || ''
+  },
+
+  /**
+   * 加密
+   * @param {string} data 数据
+   * @param {string} alg 加密算法,支持MD5，AES
+   * @returns {string} 加密后的数据
+   */
+  encrypt(data) {
+    return (data && CryptoJS.AES.encrypt(data, SECRET).toString()) || ''
+  },
+
+  /**
+   * md5编码
+   * @param {string} data 数据
+   * @returns {string} 编码后的数据
+   */
+  md5(data) {
+    return (data && CryptoJS.MD5(data).toString()) || ''
+  },
+
+  randomPwd() {
+    return 'techfin' + Math.random().toString().slice(-8)
+  },
+}

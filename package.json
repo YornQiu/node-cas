@@ -1,0 +1,67 @@
+{
+  "name": "node-cas",
+  "version": "0.0.1",
+  "author": "Yorn Qiu",
+  "type": "module",
+  "scripts": {
+    "dev": "node ./bin/www",
+    "prod": "node ./bin/www --production",
+    "test": "node ./bin/www --test",
+    "serve": "pm2 start ecosystem.config.js --env dev",
+    "start": "pm2 start ecosystem.config.js --env prod",
+    "stop": "pm2 stop ecosystem.config.js",
+    "logs": "pm2 logs"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "http-proxy-middleware": "^2.0.4",
+    "jsonwebtoken": "^9.0.2",
+    "log4js": "^6.9.1",
+    "mysql2": "^3.7.0",
+    "redis": "^4.6.12",
+    "veloc": "^0.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.7",
+    "@babel/eslint-parser": "^7.23.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "prettier": "^3.1.1"
+  },
+  "imports": {
+    "#root/*": "./*",
+    "#libs/*": "./libs/*",
+    "#routers/*": "./routers/*",
+    "#middlewares/*": "./middlewares/*",
+    "#constants": "./constants.js",
+    "#controllers": "./controllers/index.js",
+    "#services": "./services/index.js",
+    "#utils": "./utils/index.js"
+  },
+  "eslintConfig": {
+    "root": true,
+    "sourceType": "module",
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser",
+      "ecmaVersion": 2020
+    },
+    "globals": {
+      "config": "readonly",
+      "logger": "readonly"
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 120,
+    "semi": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "ES6",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "paths": {
+      "#root/*": ["./*"],
+      "#libs/*": ["./libs/*"],
+      "#middlewares/*": ["./middlewares/*"],
+      "#contants": ["./contants.js"],
+      "#controllers": ["./controllers/index.js"],
+      "#services": ["./services/index.js"],
+      "#utils": ["./utils/index.js"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
